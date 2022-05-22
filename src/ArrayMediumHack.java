@@ -109,58 +109,34 @@ public class ArrayMediumHack {
         }
 
         for (int i = 0; i < game.length; i++) {
-            System.out.println(i);
-
+//            System.out.println(i);
             if (i == game.length - 1) {
                 System.out.println("На последней позиции, выход из цикла");
                 solution = true;
                 break;
             }
-
             PossibleStep hasStep = possibleSteps.get(i);
-            System.out.println(hasStep);
-            if (hasStep.isStepForward()) {
-                if (!hasStep.getWasForward()) {
-                    hasStep.setWasForward();
-                    continue;
-                } else {
-                    if (hasStep.isStepBack()){
-                        if (!hasStep.getWasBack()){
-                            hasStep.setWasBack();
-                            i=i-2;
-                            continue;
-                        }
-                    }
-                    if (hasStep.isStepLeap()){
-                        if(hasStep.getWasLeap()){
-                            solution =false;
-                            break;
-                        } else {
-                            hasStep.setWasLeap();
-                            i = i+leap -1;
-                            continue;
-                        }
-                    }
-                }
-            } else {
-                if (hasStep.isStepBack()){
-                    if (!hasStep.getWasBack()){
-                        hasStep.setWasBack();
-                        i=i-2;
-                        continue;
-                    }
-                }
-                if (hasStep.isStepLeap()){
-                    if(hasStep.getWasLeap()){
-                        solution =false;
-                        break;
-                    } else {
-                        hasStep.setWasLeap();
-                        i = i+leap -1;
-                        continue;
-                    }
+//            System.out.println(hasStep);
+            if (leapStep(hasStep)) {
+                if (i + leap > game.length) {
+                    solution = true;
+                    break;
                 }
             }
+            if (forwardStep(hasStep)) {
+                continue;
+            }
+            if (leapStep(hasStep)) {
+                i = i + leap - 1;
+                continue;
+            }
+            if (backStep(hasStep)) {
+                i = i - 2;
+            } else {
+                solution = false;
+                break;
+            }
+        }
 //            else {
 //                if (hasStep.isStepLeap()) {
 //                    if ((i + leap) > game.length) {
@@ -177,7 +153,6 @@ public class ArrayMediumHack {
 //                    }
 //                }
 //            }
-        }
          /*catch (Exception e) {
             System.out.println(e.getMessage());
             Pattern pat = Pattern.compile("[\\-]");
@@ -188,8 +163,42 @@ public class ArrayMediumHack {
                 solution = true;
             }
         }*/
-        System.out.println(possibleSteps);
+//        System.out.println(possibleSteps);
         return solution;
+    }
+
+
+    public static boolean forwardStep(PossibleStep hasStep) {
+        boolean forwardSolution = false;
+        if (hasStep.isStepForward()) {
+            if (!hasStep.getWasForward()) {
+                hasStep.setWasForward();
+                forwardSolution = true;
+            }
+        }
+        return forwardSolution;
+    }
+
+    public static boolean leapStep(PossibleStep hasStep) {
+        boolean leapSolution = false;
+        if (hasStep.isStepLeap()) {
+            if (!hasStep.getWasLeap()) {
+                hasStep.setWasLeap();
+                leapSolution = true;
+            }
+        }
+        return leapSolution;
+    }
+
+    public static boolean backStep(PossibleStep hasStep) {
+        boolean backSolution = false;
+        if (hasStep.isStepBack()) {
+            if (!hasStep.getWasBack()) {
+                hasStep.setWasBack();
+                backSolution = true;
+            }
+        }
+        return backSolution;
     }
 
 
@@ -209,8 +218,8 @@ public class ArrayMediumHack {
 //
 //                System.out.print(i + " ");
 //            }
-            System.out.println();
-            System.out.println((canWin(leap, game)) ? "--YES-----------------\n" : "--NO------------------\n");
+//            System.out.println();
+            System.out.println((canWin(leap, game)) ? "YES" : "NO");
         }
         scan.close();
     }
