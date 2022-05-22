@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.regex.Pattern;
 
 class PossibleStep {
 
@@ -7,6 +6,9 @@ class PossibleStep {
     boolean stepForward;
     boolean stepLeap;
     boolean stepBack;
+    boolean wasForward = false;
+    boolean wasBack = false;
+    boolean wasLeap = false;
 
     public PossibleStep(int position) {
         this.position = position;
@@ -20,6 +22,30 @@ class PossibleStep {
         this.stepForward = stepForward;
         this.stepLeap = stepLeap;
         this.stepBack = stepBack;
+    }
+
+    public boolean getWasForward() {
+        return wasForward;
+    }
+
+    public boolean getWasBack() {
+        return wasBack;
+    }
+
+    public boolean getWasLeap() {
+        return wasLeap;
+    }
+
+    public void setWasForward() {
+        wasForward = true;
+    }
+
+    public void setWasBack() {
+        wasBack = true;
+    }
+
+    public void setWasLeap() {
+        wasLeap = true;
     }
 
     public int getPosition() {
@@ -94,23 +120,63 @@ public class ArrayMediumHack {
             PossibleStep hasStep = possibleSteps.get(i);
             System.out.println(hasStep);
             if (hasStep.isStepForward()) {
-                continue;
-            } else {
-                if (hasStep.isStepLeap()) {
-                    if ((i + leap)>game.length){
-                        solution = true;
-                        break;
-                    }
-                    i = i + leap - 1;
+                if (!hasStep.getWasForward()) {
+                    hasStep.setWasForward();
+                    continue;
                 } else {
-                    if (hasStep.isStepBack()) {
-                        i = i - 2;
-                    } else {
-                        solution = false;
+                    if (hasStep.isStepBack()){
+                        if (!hasStep.getWasBack()){
+                            hasStep.setWasBack();
+                            i=i-2;
+                            continue;
+                        }
+                    }
+                    if (hasStep.isStepLeap()){
+                        if(hasStep.getWasLeap()){
+                            solution =false;
+                            break;
+                        } else {
+                            hasStep.setWasLeap();
+                            i = i+leap -1;
+                            continue;
+                        }
+                    }
+                }
+            } else {
+                if (hasStep.isStepBack()){
+                    if (!hasStep.getWasBack()){
+                        hasStep.setWasBack();
+                        i=i-2;
+                        continue;
+                    }
+                }
+                if (hasStep.isStepLeap()){
+                    if(hasStep.getWasLeap()){
+                        solution =false;
                         break;
+                    } else {
+                        hasStep.setWasLeap();
+                        i = i+leap -1;
+                        continue;
                     }
                 }
             }
+//            else {
+//                if (hasStep.isStepLeap()) {
+//                    if ((i + leap) > game.length) {
+//                        solution = true;
+//                        break;
+//                    }
+//                    i = i + leap - 1;
+//                } else {
+//                    if (hasStep.isStepBack()) {
+//                        i = i - 2;
+//                    } else {
+//                        solution = false;
+//                        break;
+//                    }
+//                }
+//            }
         }
          /*catch (Exception e) {
             System.out.println(e.getMessage());
@@ -138,11 +204,11 @@ public class ArrayMediumHack {
             for (int i = 0; i < n; i++) {
                 game[i] = scan.nextInt();
             }
-            for (int i :
-                    game) {
-
-                System.out.print(i + " ");
-            }
+//            for (int i :
+//                    game) {
+//
+//                System.out.print(i + " ");
+//            }
             System.out.println();
             System.out.println((canWin(leap, game)) ? "--YES-----------------\n" : "--NO------------------\n");
         }
